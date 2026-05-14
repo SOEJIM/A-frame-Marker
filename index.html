@@ -2,55 +2,63 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <!-- スマホ画面での拡大縮小を防ぎ、全画面にフィットさせる -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AR Smartphone App</title>
+    <title>AR Custom 3D Model</title>
     <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
   </head>
   <body style="margin: 0; overflow: hidden;">
     
-    <!-- スマホでのタップ対応 ＆ VRゴーグルボタン非表示(vr-mode-ui) -->
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" cursor="mouseCursor: true; raycaster: objects: .clickable" vr-mode-ui="enabled: false">
       
+      <!-- 3Dモデルなどの素材（アセット）を事前に読み込んでおく（推奨） -->
+      <a-assets>
+        <a-asset-item id="model-i" src="I.glb"></a-asset-item>
+        <a-asset-item id="model-m" src="M.glb"></a-asset-item>
+        <a-asset-item id="model-d" src="D.glb"></a-asset-item>
+      </a-assets>
+
       <a-entity camera></a-entity>
 
-      <!-- カスタムマーカー（作成した.pattファイル）の読み込み -->
-      <!-- ※マーカーのファイル名が異なる場合は「pattern_QR.patt」を書き換えてください -->
-      <!-- ※マーカーの黒枠を細く設定して作成した場合は patternRatio="0.xx" を追加してください -->
       <a-marker type="pattern" url="pattern_QR.patt">
         
-        <!-- Welcomeテキスト（固定） -->
-        <a-text
-          value="Welcome..."
-          position="0 0 -1.2" 
-          rotation="-90 0 0"
-          align="center"
-          color="#FFD700" 
-          width="5"
-          scale="2 2 2">
-        </a-text>
+        <!-- Welcomeテキスト（固定表示のまま） -->
+        <a-text value="Welcome..." position="0 0 -1.2" rotation="-90 0 0" align="center" color="#FFD700" width="5" scale="2 2 2"></a-text>
 
-        <!-- 文字「I」 (当たり判定の白板を opacity: 0.0 で透明にしています) -->
-        <a-text class="clickable letter" value="I" position="-1 0 0" rotation="-90 0 0" align="center" color="#4CC3D9" width="5" scale="3 3 3"
+        <!-- 3Dモデル「I」 -->
+        <!-- gltf-model="#ID名" で事前に読み込んだモデルを指定します -->
+        <!-- 当たり判定用の透明な板(geometry/material)はそのまま残しています -->
+        <a-entity
+          class="clickable letter"
+          gltf-model="#model-i"
+          position="-1 0 0"
+          scale="1 1 1"
           geometry="primitive: plane; width: 0.7; height: 1.0"
-          material="color: white; opacity: 0.0; transparent: true"
-          animation="property: rotation; from: -90 0 0; to: -90 0 360; dur: 800; startEvents: spin">
-        </a-text>
+          material="opacity: 0.0; transparent: true"
+          animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
+        </a-entity>
 
-        <!-- 文字「M」 -->
-        <a-text class="clickable letter" value="M" position="0 0 0" rotation="-90 0 0" align="center" color="#FF4136" width="5" scale="3 3 3"
+        <!-- 3Dモデル「M」 -->
+        <a-entity
+          class="clickable letter"
+          gltf-model="#model-m"
+          position="0 0 0"
+          scale="1 1 1"
           geometry="primitive: plane; width: 0.7; height: 1.0"
-          material="color: white; opacity: 0.0; transparent: true"
-          animation="property: rotation; from: -90 0 0; to: -90 0 360; dur: 800; startEvents: spin">
-        </a-text>
+          material="opacity: 0.0; transparent: true"
+          animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
+        </a-entity>
 
-        <!-- 文字「D」 -->
-        <a-text class="clickable letter" value="D" position="1 0 0" rotation="-90 0 0" align="center" color="#2ECC40" width="5" scale="3 3 3"
+        <!-- 3Dモデル「D」 -->
+        <a-entity
+          class="clickable letter"
+          gltf-model="#model-d"
+          position="1 0 0"
+          scale="1 1 1"
           geometry="primitive: plane; width: 0.7; height: 1.0"
-          material="color: white; opacity: 0.0; transparent: true"
-          animation="property: rotation; from: -90 0 0; to: -90 0 360; dur: 800; startEvents: spin">
-        </a-text>
+          material="opacity: 0.0; transparent: true"
+          animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
+        </a-entity>
 
       </a-marker>
       
