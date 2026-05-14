@@ -3,17 +3,28 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AR HTML UI Tracking</title>
+    <title>AR Fixed UI</title>
     <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
     
     <style>
-      .ui-btn {
+      /* 画面下部に固定するUIエリア */
+      #ui-container {
         position: absolute;
-        transform: translate(-50%, -50%); 
+        bottom: 40px; /* 画面の下から40pxの位置 */
+        left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: center; /* ボタンを中央に寄せる */
+        gap: 20px; /* ボタン同士の隙間 */
+        z-index: 1000; /* AR画面より手前に表示 */
+      }
+      
+      /* ボタンのデザイン */
+      .ui-btn {
         width: 60px;
         height: 60px;
-        background-color: rgba(255, 255, 255, 0.8);
+        background-color: rgba(255, 255, 255, 0.9);
         border: 2px solid #333;
         border-radius: 50%;
         font-size: 24px;
@@ -21,64 +32,27 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        z-index: 1000; 
-        display: none; /* 最初は非表示 */
         box-shadow: 0 4px 6px rgba(0,0,0,0.3);
       }
+      
+      /* 押した時のへこむアニメーション */
       .ui-btn:active {
         background-color: rgba(200, 200, 200, 0.9);
-        transform: translate(-50%, -50%) scale(0.9);
+        transform: scale(0.9);
       }
     </style>
   </head>
   
   <body style="margin: 0; overflow: hidden;">
     
-    <div id="btn-i" class="ui-btn">I</div>
-    <div id="btn-m" class="ui-btn">M</div>
-    <div id="btn-d" class="ui-btn">D</div>
+    <!-- 画面下部のボタン（絶対に表示されます） -->
+    <div id="ui-container">
+      <div id="btn-i" class="ui-btn">I</div>
+      <div id="btn-m" class="ui-btn">M</div>
+      <div id="btn-d" class="ui-btn">D</div>
+    </div>
 
-    <script>
-      AFRAME.registerComponent('ui-tracker', {
-        schema: { target: { type: 'string' } },
-        
-        tick: function () {
-          const uiEl = document.querySelector(this.data.target);
-          if (!uiEl) return;
-
-          const marker = document.querySelector('a-marker');
-          
-          // ★修正ポイント1★
-          // マーカー自体や、3D空間(object3D)が「まだ準備できていない時」は処理をスキップする安全装置
-          if (!marker || !marker.object3D || !marker.object3D.visible) {
-            uiEl.style.display = 'none';
-            return;
-          }
-
-          // ★修正ポイント2★
-          // カメラがまだ準備できていない時もスキップする
-          const camera = this.el.sceneEl.camera;
-          if (!camera) {
-            uiEl.style.display = 'none';
-            return;
-          }
-          
-          const position = new THREE.Vector3();
-          this.el.object3D.getWorldPosition(position);
-          position.project(camera);
-          
-          const widthHalf = window.innerWidth / 2;
-          const heightHalf = window.innerHeight / 2;
-          const x = (position.x * widthHalf) + widthHalf;
-          const y = -(position.y * heightHalf) + heightHalf;
-          
-          uiEl.style.display = 'flex';
-          uiEl.style.left = x + 'px';
-          uiEl.style.top = y + 'px';
-        }
-      });
-    </script>
-
+    <!-- AR空間の記述 -->
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" vr-mode-ui="enabled: false">
       <a-assets>
         <a-asset-item id="model-i" src="model_I.glb"></a-asset-item>
@@ -92,21 +66,23 @@
         
         <a-text value="Welcome..." position="0 0 -1.2" rotation="-90 0 0" align="center" color="#FFD700" width="5" scale="2 2 2"></a-text>
 
-        <a-entity id="anim-i" position="-1 0 0" ui-tracker="target: #btn-i" animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
+        <!-- アニメーションと3Dモデルの配置のみ（当たり判定などの複雑な処理は全削除） -->
+        <a-entity id="anim-i" position="-1 0 0" animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
           <a-entity gltf-model="#model-i" rotation="0 90 -90" scale="1 1 1"></a-entity>
         </a-entity>
 
-        <a-entity id="anim-m" position="0 0 0" ui-tracker="target: #btn-m" animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
+        <a-entity id="anim-m" position="0 0 0" animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
           <a-entity gltf-model="#model-m" rotation="0 90 -90" scale="1 1 1"></a-entity>
         </a-entity>
 
-        <a-entity id="anim-d" position="1 0 0" ui-tracker="target: #btn-d" animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
+        <a-entity id="anim-d" position="1 0 0" animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
           <a-entity gltf-model="#model-d" rotation="0 90 -90" scale="1 1 1"></a-entity>
         </a-entity>
 
       </a-marker>
     </a-scene>
 
+    <!-- ボタンを押したらモデルを回すスクリプト -->
     <script>
       document.getElementById('btn-i').addEventListener('click', () => {
         document.querySelector('#anim-i').emit('spin');
