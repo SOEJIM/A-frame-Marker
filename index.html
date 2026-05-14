@@ -23,42 +23,44 @@
       <a-marker type="pattern" url="pattern_QR.patt">
         
         <!-- Welcomeテキスト（固定表示のまま） -->
-        <a-text value="Welcome..." position="0 0 -1.2" rotation="-90 0 0" align="center" color="#FFD700" width="5" scale="2 2 2"></a-text>
+        <a-text value="Welcome!!" position="0 0 -1.2" rotation="-90 0 0" align="center" color="#FFD700" width="5" scale="2 2 2"></a-text>
 
-        <!-- 3Dモデル「I」 -->
-        <!-- gltf-model="#ID名" で事前に読み込んだモデルを指定します -->
-        <!-- 当たり判定用の透明な板(geometry/material)はそのまま残しています -->
-        <a-entity
-          class="clickable letter"
-          position="-1 0 0"
-          geometry="primitive: plane; width: 0.7; height: 1.0"
-          material="color: Yellow; opacity: 0.5;"
-          animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
+        <a-entity id="anim-i" position="-1 0 0" animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
+         <a-entity
+           class="clickable letter"
+           data-target="#anim-i"
+           rotation="-90 0 0"
+           geometry="primitive: plane; width: 0.7; height: 1.0"
+           material="color: Yellow; opacity: 0.5; transparent: true">
+         </a-entity>
 
           <a-entity gltf-model="#model-i" rotation="0 90 -90" scale="0.1 0.1 0.1"></a-entity>
         </a-entity>
 
         <!-- 3Dモデル「M」 -->
+      <a-entity id="anim-m" position="0 0 0" animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
         <a-entity
           class="clickable letter"
-          position="0 0 0"
+          data-target="#anim-m"
+          rotation="-90 0 0"
           geometry="primitive: plane; width: 0.7; height: 1.0"
-          material="color: Green; opacity: 0.5;"
-          animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
-
-          <a-entity gltf-model="#model-m" rotation="0 90 -90" scale="0.1 0.1 0.1"></a-entity>
+          material="color: Green; opacity: 0.5; transparent: true">
         </a-entity>
+
+        <a-entity gltf-model="#model-m" rotation="0 90 -90" scale="0.1 0.1 0.1"></a-entity>
+      </a-entity>
 
         <!-- 3Dモデル「D」 -->
+      <a-entity id="anim-d" position="1 0 0" animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
         <a-entity
           class="clickable letter"
-          position="1 0 0"
+          data-target="#anim-d"
           geometry="primitive: plane; width: 0.7; height: 1.0"
-          material="color: Blue; opacity: 0.5;"
-          animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
+          material="color: Blue; opacity: 0.5; transparent: true">
+        </a-entity>  
 
-          <a-entity gltf-model="#model-d" rotation="180 90 -90" scale="0.1 0.1 0.1"></a-entity>
-        </a-entity>
+        <a-entity gltf-model="#model-d" rotation="180 90 -90" scale="0.1 0.1 0.1"></a-entity>
+      </a-entity>
 
       </a-marker>
       
