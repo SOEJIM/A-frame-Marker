@@ -7,11 +7,9 @@
     <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
     
-    <!-- 2D HTMLボタンのスタイル（CSS） -->
     <style>
       .ui-btn {
         position: absolute;
-        /* ボタンの中心を座標に合わせる調整 */
         transform: translate(-50%, -50%); 
         width: 60px;
         height: 60px;
@@ -23,13 +21,10 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        /* ARの画面より手前（一番上）に表示する */
         z-index: 1000; 
-        /* 最初は非表示にしておく */
-        display: none;
+        display: none; /* 最初は非表示 */
         box-shadow: 0 4px 6px rgba(0,0,0,0.3);
       }
-      /* タップした時の視覚的なフィードバック */
       .ui-btn:active {
         background-color: rgba(200, 200, 200, 0.9);
         transform: translate(-50%, -50%) scale(0.9);
@@ -39,45 +34,44 @@
   
   <body style="margin: 0; overflow: hidden;">
     
-    <!-- 2D HTMLボタン（A-FrameのSceneの外側に置きます） -->
-    <!-- ※今回はデザインをわかりやすく丸いボタンにしていますが、透明(opacity: 0)にすれば完全な見えないタップ領域になります -->
     <div id="btn-i" class="ui-btn">I</div>
     <div id="btn-m" class="ui-btn">M</div>
     <div id="btn-d" class="ui-btn">D</div>
 
-    <!-- 座標変換を行う独自コンポーネントの定義 -->
     <script>
       AFRAME.registerComponent('ui-tracker', {
         schema: { target: { type: 'string' } },
         
         tick: function () {
-          // 追従させるHTML要素を取得
           const uiEl = document.querySelector(this.data.target);
           if (!uiEl) return;
 
           const marker = document.querySelector('a-marker');
           
-          // マーカーが見えていない時はボタンを隠す
-          if (!marker.object3D.visible) {
+          // ★修正ポイント1★
+          // マーカー自体や、3D空間(object3D)が「まだ準備できていない時」は処理をスキップする安全装置
+          if (!marker || !marker.object3D || !marker.object3D.visible) {
             uiEl.style.display = 'none';
             return;
           }
 
-          // 3D座標を取得
+          // ★修正ポイント2★
+          // カメラがまだ準備できていない時もスキップする
+          const camera = this.el.sceneEl.camera;
+          if (!camera) {
+            uiEl.style.display = 'none';
+            return;
+          }
+          
           const position = new THREE.Vector3();
           this.el.object3D.getWorldPosition(position);
-          
-          const camera = this.el.sceneEl.camera;
-          if (!camera) return;
-          
-          // WorldToScreenPointの計算（3Dから2D画面上の座標に変換）
           position.project(camera);
+          
           const widthHalf = window.innerWidth / 2;
           const heightHalf = window.innerHeight / 2;
           const x = (position.x * widthHalf) + widthHalf;
           const y = -(position.y * heightHalf) + heightHalf;
           
-          // HTML要素のCSSを毎フレーム更新して追従させる
           uiEl.style.display = 'flex';
           uiEl.style.left = x + 'px';
           uiEl.style.top = y + 'px';
@@ -85,7 +79,6 @@
       });
     </script>
 
-    <!-- AR空間の記述（Raycaster系は削除して軽くしました） -->
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" vr-mode-ui="enabled: false">
       <a-assets>
         <a-asset-item id="model-i" src="model_I.glb"></a-asset-item>
@@ -99,27 +92,22 @@
         
         <a-text value="Welcome..." position="0 0 -1.2" rotation="-90 0 0" align="center" color="#FFD700" width="5" scale="2 2 2"></a-text>
 
-        <!-- モデルI: ui-trackerでHTMLの #btn-i に自分の座標を送る -->
         <a-entity id="anim-i" position="-1 0 0" ui-tracker="target: #btn-i" animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
           <a-entity gltf-model="#model-i" rotation="0 90 -90" scale="1 1 1"></a-entity>
         </a-entity>
 
-        <!-- モデルM -->
         <a-entity id="anim-m" position="0 0 0" ui-tracker="target: #btn-m" animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
           <a-entity gltf-model="#model-m" rotation="0 90 -90" scale="1 1 1"></a-entity>
         </a-entity>
 
-        <!-- モデルD -->
         <a-entity id="anim-d" position="1 0 0" ui-tracker="target: #btn-d" animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
-          <a-entity gltf-model="#model-d" rotation="180 90 -90" scale="1 1 1"></a-entity>
+          <a-entity gltf-model="#model-d" rotation="0 90 -90" scale="1 1 1"></a-entity>
         </a-entity>
 
       </a-marker>
     </a-scene>
 
-    <!-- HTMLボタンのクリックイベント -->
     <script>
-      // 2Dボタンが押されたら、対応する3Dモデルを回転させる
       document.getElementById('btn-i').addEventListener('click', () => {
         document.querySelector('#anim-i').emit('spin');
       });
