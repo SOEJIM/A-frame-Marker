@@ -55,6 +55,7 @@
         <a-entity
           class="clickable letter"
           data-target="#anim-d"
+          rotation="-90 0 0"
           geometry="primitive: plane; width: 0.7; height: 1.0"
           material="color: Blue; opacity: 0.5; transparent: true">
         </a-entity>  
@@ -67,12 +68,18 @@
     </a-scene>
 
     <script>
-      const letters = document.querySelectorAll('.letter');
-      letters.forEach((letter) => {
-        letter.addEventListener('click', function() {
-          this.emit('spin');
-        });
-      });
+     　　　// .letter-hitbox クラスを持つ「当たり判定の板」をすべて取得
+      const hitboxes = document.querySelectorAll('.letter-hitbox');
+
+      hitboxes.forEach((hitbox) => {
+        hitbox.addEventListener('click', function() {
+    // 自分が持っている data-target (例: #anim-i) を取得
+        const targetId = this.getAttribute('data-target');
+    
+    // その親要素を見つけて、'spin' イベントを送る（回す）
+    document.querySelector(targetId).emit('spin');
+  });
+});
     </script>
   </body>
 </html>
