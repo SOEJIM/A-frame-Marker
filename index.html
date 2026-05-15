@@ -11,7 +11,6 @@
     
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" cursor="mouseCursor: true; raycaster: objects: .clickable" vr-mode-ui="enabled: false">
       
-      <!-- 3Dモデルなどの素材（アセット）を事前に読み込んでおく（推奨） -->
       <a-assets>
         <a-asset-item id="model-i" src="I2.glb"></a-asset-item>
         <a-asset-item id="model-m" src="M2.glb"></a-asset-item>
@@ -22,64 +21,58 @@
 
       <a-marker type="pattern" url="pattern_QR.patt">
         
-        <!-- Welcomeテキスト（固定表示のまま） -->
         <a-text value="Welcome!!" position="0 0 -1.2" rotation="-90 0 0" align="center" color="#FFD700" width="5" scale="2 2 2"></a-text>
 
         <a-entity id="anim-i" position="-1 0 0" animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
-         <a-entity
-           class="clickable letter-hitbox"
-           data-target="#anim-i"
-           position="0 0.5 0"
-           geometry="primitive: box; width: 0.8; height: 1.2; depth: 0.8"
-           material="color: Yellow; opacity: 0.5; transparent: true">
-         </a-entity>
-
+          <a-entity
+            class="clickable letter-hitbox"
+            data-target="#anim-i"
+            position="0 0.5 0"
+            geometry="primitive: box; width: 0.8; height: 1.2; depth: 0.8"
+            material="color: Yellow; opacity: 0.5; transparent: true">
+          </a-entity>
           <a-entity gltf-model="#model-i" rotation="0 90 -90" scale="0.1 0.1 0.1"></a-entity>
         </a-entity>
 
-        <!-- 3Dモデル「M」 -->
-      <a-entity id="anim-m" position="0 0 0" animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
-        <a-entity
-          class="clickable letter"
-          data-target="#anim-m"
-          position="0 0.5 0"
-          geometry="primitive: box; width: 0.8; height: 1.2; depth: 0.8"
-          material="color: Green; opacity: 0.5; transparent: true">
+        <a-entity id="anim-m" position="0 0 0" animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
+          <a-entity
+            class="clickable letter-hitbox"
+            data-target="#anim-m"
+            position="0 0.5 0"
+            geometry="primitive: box; width: 0.8; height: 1.2; depth: 0.8"
+            material="color: Green; opacity: 0.5; transparent: true">
+          </a-entity>
+          <a-entity gltf-model="#model-m" rotation="0 90 -90" scale="0.1 0.1 0.1"></a-entity>
         </a-entity>
 
-        <a-entity gltf-model="#model-m" rotation="0 90 -90" scale="0.1 0.1 0.1"></a-entity>
-      </a-entity>
-
-        <!-- 3Dモデル「D」 -->
-      <a-entity id="anim-d" position="1 0 0" animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
-        <a-entity
-          class="clickable letter"
-          data-target="#anim-d"
-          position="0 0.5 0"
-          geometry="primitive: box; width: 0.8; height: 1.2; depth:0.8"
-          material="color: Blue; opacity: 0.5; transparent: true">
-        </a-entity>  
-
-        <a-entity gltf-model="#model-d" rotation="180 90 -90" scale="0.1 0.1 0.1"></a-entity>
-      </a-entity>
+        <a-entity id="anim-d" position="1 0 0" animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 800; startEvents: spin">
+          <a-entity
+            class="clickable letter-hitbox"
+            data-target="#anim-d"
+            position="0 0.5 0"
+            geometry="primitive: box; width: 0.8; height: 1.2; depth:0.8"
+            material="color: Blue; opacity: 0.5; transparent: true">
+          </a-entity>  
+          <a-entity gltf-model="#model-d" rotation="180 90 -90" scale="0.1 0.1 0.1"></a-entity>
+        </a-entity>
 
       </a-marker>
       
     </a-scene>
 
     <script>
-     　　　// .letter-hitbox クラスを持つ「当たり判定の板」をすべて取得
+      // .letter-hitbox クラスを持つ「当たり判定の板(箱)」をすべて取得
       const hitboxes = document.querySelectorAll('.letter-hitbox');
 
       hitboxes.forEach((hitbox) => {
         hitbox.addEventListener('click', function() {
-    // 自分が持っている data-target (例: #anim-i) を取得
-        const targetId = this.getAttribute('data-target');
-    
-    // その親要素を見つけて、'spin' イベントを送る（回す）
-    document.querySelector(targetId).emit('spin');
-  });
-});
+          // 自分が持っている data-target (例: #anim-i) を取得
+          const targetId = this.getAttribute('data-target');
+          
+          // その親要素を見つけて、'spin' イベントを送る（回す）
+          document.querySelector(targetId).emit('spin');
+        });
+      });
     </script>
   </body>
 </html>
