@@ -65,14 +65,22 @@
     </a-scene>
 
     <script>
-      const hitboxes = document.querySelectorAll('.letter-hitbox');
+      // 当たり判定の箱をすべて取得
+const hitboxes = document.querySelectorAll('.letter-hitbox');
 
-      hitboxes.forEach((hitbox) => {
-        hitbox.addEventListener('click', function() {
-          const targetId = this.getAttribute('data-target');
-          document.querySelector(targetId).emit('spin');
-        });
-      });
+hitboxes.forEach((hitbox) => {
+  // 'click'（Android用）と 'touchstart'（iPhone用）の両方に対応させる
+  ['click', 'touchstart'].forEach((eventType) => {
+    hitbox.addEventListener(eventType, function(event) {
+      // iPhoneなどで、タッチとクリックが2重に反応するのを防ぐ
+      event.preventDefault(); 
+      
+      // 自分が持っている data-target を取得して回す
+      const targetId = this.getAttribute('data-target');
+      document.querySelector(targetId).emit('spin');
+    });
+  });
+});
     </script>
   </body>
 </html>
